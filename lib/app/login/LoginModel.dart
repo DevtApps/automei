@@ -1,6 +1,6 @@
 import 'package:automei/app/main/MainModel.dart';
 import 'package:automei/app/util/Alerts.dart';
-import 'package:automei/fastfire/models/OnResultAuth.dart';
+import 'package:automei/app/interface/OnResultAuth.dart';
 import 'package:automei/fastfire/models/SocialSignInModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

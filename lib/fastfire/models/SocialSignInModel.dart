@@ -1,4 +1,4 @@
-import 'package:automei/fastfire/models/OnResultAuth.dart';
+import 'package:automei/app/interface/OnResultAuth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:github_sign_in/github_sign_in.dart';
@@ -46,11 +46,9 @@ abstract class SocialSignInModel implements OnResult {
       final LoginResult result = await FacebookAuth.instance
           .login(permissions: ["public_profile", "email"]);
 
-      // Create a credential from the access token
       final facebookAuthCredential =
           FacebookAuthProvider.credential(result.accessToken!.token);
 
-      // Once signed in, return the UserCredential
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithCredential(facebookAuthCredential);
       onSuccess(userCredential);
@@ -67,13 +65,10 @@ abstract class SocialSignInModel implements OnResult {
           clientSecret: "ab4bf0cbda943effce3f97edbe76e0df0c3ee2e2",
           redirectUrl: 'https://automei.firebaseapp.com/__/auth/handler');
 
-      // Trigger the sign-in flow
       final result = await gitHubSignIn.signIn(context);
 
-      // Create a credential from the access token
       final githubAuthCredential = GithubAuthProvider.credential(result.token);
 
-      // Once signed in, return the UserCredential
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithCredential(githubAuthCredential);
       onSuccess(userCredential);
