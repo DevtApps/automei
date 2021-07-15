@@ -40,13 +40,9 @@ abstract class LoginModel extends State<LoginView> with SocialSignInModel {
         setState(() {
           loading = false;
         });
-        Navigator.of(context).pushReplacementNamed(MainModel.route);
-      } else {
-        Navigator.of(context).pushReplacementNamed(MainModel.route);
       }
-    } else {
-      Navigator.of(context).pushReplacementNamed(MainModel.route);
     }
+    Navigator.of(context).pushReplacementNamed(MainModel.route);
   }
 
   Widget LoginButton() {
@@ -68,7 +64,7 @@ abstract class LoginModel extends State<LoginView> with SocialSignInModel {
         onPressed: signIn);
   }
 
-  signIn() async {
+  void signIn() async {
     setState(() {
       loading = true;
     });
@@ -77,7 +73,7 @@ abstract class LoginModel extends State<LoginView> with SocialSignInModel {
     }
   }
 
-  signOut() async {
+  void signOut() async {
     setState(() {
       loading = true;
     });
@@ -108,7 +104,7 @@ abstract class LoginModel extends State<LoginView> with SocialSignInModel {
   }
 
   late PersistentBottomSheetController bottom;
-  forgetPassword() {
+  void forgetPassword() {
     setState(() {
       isReset = true;
     });
