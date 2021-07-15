@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1078687504283",
+    "project_id": "automei",
+    "storage_bucket": "automei.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078687504283:android:7410e5c4c786ef2972f33e",
+        "android_client_info": {
+          "package_name": "com.appside.automei"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078687504283-jo5ut3hu48vluv0r65u2urldga7fmlio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appside.automei",
+            "certificate_hash": "184ec2266bf06759bd7a0a1b7fd551a6a41a29a4"
+          }
+        },
+        {
+          "client_id": "1078687504283-5613akiturh6qntedrs3u6e8i556fmrl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLgwiaC0AO6bHWbiXyDZ8LdSUbepJStX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078687504283-5613akiturh6qntedrs3u6e8i556fmrl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
