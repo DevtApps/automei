@@ -31,9 +31,15 @@ abstract class StockFragmentModel extends State<StockFragmentView>
         .snapshots();
   }
 
-  void onProductClick(Product product) {
+  void onProductClick(Product product) async {
     if (widget.isChoice) {
       Navigator.of(context).pop(product);
-    } else {}
+    } else {
+      await Navigator.of(context)
+          .pushNamed(AddProductModel.route, arguments: product);
+      setState(() {
+        widget.isChoice = false;
+      });
+    }
   }
 }

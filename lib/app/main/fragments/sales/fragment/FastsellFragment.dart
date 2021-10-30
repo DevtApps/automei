@@ -1,14 +1,20 @@
+import 'package:automei/app/api/Api.dart';
+import 'package:automei/app/api/AppAds.dart';
 import 'package:automei/app/api/model/Client.dart';
 import 'package:automei/app/api/model/Order.dart';
 import 'package:automei/app/api/model/Product.dart';
 import 'package:automei/app/interface/OnClick.dart';
 import 'package:automei/app/main/fragments/clients/ClientsFragmentView.dart';
 import 'package:automei/app/main/fragments/stock/StockFragmentView.dart';
+import 'package:automei/app/provider/AppStatus.dart';
 import 'package:automei/app/util/Alerts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:facebook_audience_network/ad/ad_interstitial.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class FastsellFragment extends StatefulWidget implements OnClick {
@@ -18,8 +24,8 @@ class FastsellFragment extends StatefulWidget implements OnClick {
   _FastsellFragmentState createState() => state;
 
   @override
-  onTap() {
-    state.onTap();
+  onTap() async {
+    return await state.onTap();
   }
 }
 
@@ -243,10 +249,11 @@ class _FastsellFragmentState extends State<FastsellFragment>
                       onTap: () async {
                         nameFocus.unfocus();
                         Product? product = await choiceProduct();
-                        if (product != null) {}
-                        setState(() {
-                          order.itens.add(Item(product));
-                        });
+                        if (product != null) {
+                          setState(() {
+                            order.itens.add(Item(product));
+                          });
+                        }
                       })),
               Column(
                 children: List.generate(order.itens.length, (index) {
@@ -294,7 +301,6 @@ class _FastsellFragmentState extends State<FastsellFragment>
                             ),
                             TextButton(
                                 onPressed: () {
-                                  print(order.toString());
                                   if (order.itens[index].amount <
                                       order.itens[index].product!.amount) {
                                     setState(() {
@@ -328,14 +334,26 @@ class _FastsellFragmentState extends State<FastsellFragment>
         "user": auth.currentUser?.uid,
         "date": DateTime.now().millisecondsSinceEpoch
       });
+      order.account = auth.currentUser!.uid;
+      order.clientId = order.client!.uid;
       order.date = DateTime.now();
-      await firestore
-          .collection("users")
-          .doc(auth.currentUser?.uid)
-          .collection("sales")
-          .add(order.toJson());
+      await firestore.collection("sales").doc(order.uid).set(order.toJson());
 
+      for (Item item in order.itens) {
+        if (item.product!.isStock) {
+          firestore
+              .collection("users")
+              .doc(auth.currentUser!.uid)
+              .collection("stock")
+              .doc(item.product!.uid)
+              .update({"amount": item.product!.amount - item.amount});
+        }
+      }
       order = Order();
+      if (!Provider.of<AppStatus>(context, listen: false).subscriptionStatus!)
+        AppAds().loadInterstitial();
+
+      return true;
     } else {
       Alerts.of(context).snack("Complete todos os campos");
     }

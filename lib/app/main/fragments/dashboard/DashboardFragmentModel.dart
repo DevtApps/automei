@@ -1,3 +1,4 @@
+import 'package:automei/app/api/model/Settings.dart' as sett;
 import 'package:automei/app/main/fragments/sales/SalesFragmentModel.dart';
 import 'package:automei/app/main/fragments/sales/fragment/FastsellFragment.dart';
 import 'package:automei/fastfire/models/UserStateModel.dart';
@@ -19,14 +20,18 @@ abstract class DashboardFragmentModel extends State<DashboardFragmentView>
   var isFastSale = false;
   late PersistentBottomSheetController fastController;
   late FastsellFragment fastsellFragment;
+  var stockLow = 10;
 
   Stream<QuerySnapshot<Map<String, dynamic>>> openStreamLastSales() {
     return firestore
-        .collection("users")
-        .doc(auth.currentUser?.uid)
         .collection("sales")
-        .where("date",
-            isGreaterThan: DateTime.now().subtract(Duration(days: 7)))
+        .where(
+          "date",
+          isGreaterThan: DateTime.now().subtract(
+            Duration(days: 7),
+          ),
+        )
+        .where("account", isEqualTo: auth.currentUser!.uid)
         .orderBy("date", descending: true)
         .limit(5)
         .snapshots();
@@ -37,7 +42,7 @@ abstract class DashboardFragmentModel extends State<DashboardFragmentView>
         .collection("users")
         .doc(auth.currentUser?.uid)
         .collection("stock")
-        .where("amount", isLessThan: 10, isGreaterThan: -1)
+        .where("amount", isLessThan: stockLow, isGreaterThan: -1)
         .orderBy("amount")
         .limit(5)
         .snapshots();
@@ -46,11 +51,10 @@ abstract class DashboardFragmentModel extends State<DashboardFragmentView>
   getHeader() async {
     var header = {};
     var result = await firestore
-        .collection("users")
-        .doc(auth.currentUser?.uid)
         .collection("sales")
         .where("date",
             isGreaterThan: DateTime.now().subtract(Duration(days: 7)))
+        .where("account", isEqualTo: auth.currentUser!.uid)
         .get();
     header['sales'] = result.docs.length;
     var total = 0.0;
@@ -71,8 +75,9 @@ abstract class DashboardFragmentModel extends State<DashboardFragmentView>
     if (!isFastSale) {
       fastSell();
     } else {
-      await fastsellFragment.onTap();
-      fastController.close();
+      var result = await fastsellFragment.onTap();
+      print(result);
+      if (result != null && result) fastController.close();
     }
   }
 
@@ -97,5 +102,23 @@ abstract class DashboardFragmentModel extends State<DashboardFragmentView>
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      firestore
+          .collection("users")
+          .doc(auth.currentUser!.uid)
+          .collection("app")
+          .doc("settings")
+          .get()
+          .then((value) {
+        if (value.exists) {
+          setState(() {
+            var settings = sett.Settings.fromJson(value.data()!);
+            stockLow = settings.stockLow;
+            print(stockLow);
+          });
+        }
+      });
+    });
   }
 }

@@ -1,0 +1,14 @@
+import 'package:flutter/foundation.dart';
+
+const URL_DEV = "http://192.168.1.6:8080/api";
+const URL_LIVE = "https://automei.appsideinc.com/api";
+var URL = kReleaseMode ? URL_LIVE : URL_DEV;
+
+var F_PREFIX_DEV = "IMG_16_9_APP_INSTALL#";
+
+var ADMOB_BANNER_TEST = "ca-app-pub-3940256099942544/6300978111";
+var ADMOB_INTERSTITIAL_TEST = "ca-app-pub-3940256099942544/1033173712";
+var ADMOB_INTERSTITIAL_VIDEO_TEST = "ca-app-pub-3940256099942544/8691691433";
+
+var ADMOB_REWARD_TEST = "ca-app-pub-3940256099942544/5224354917";
+var ADMOB_REWARD_VIDEO_TEST = "ca-app-pub-3940256099942544/5354046379";

@@ -19,7 +19,7 @@ abstract class AddProductModel extends State<AddProductView>
   static var route = "add_product";
 
   FocusNode fieldStock = FocusNode();
-
+  var isUpdate = false;
   var isStock = true;
   var imagePath;
   late Size size;
@@ -31,6 +31,9 @@ abstract class AddProductModel extends State<AddProductView>
   var descController = TextEditingController();
   var valueController = MaskedTextController(mask: "R\$0,00");
   var stockController = TextEditingController();
+  int category = -1;
+
+  Product? product;
 
   @override
   void initState() {
@@ -64,6 +67,42 @@ abstract class AddProductModel extends State<AddProductView>
       //valueController.updateText(text);
       return true;
     };
+
+    Future.delayed(Duration(milliseconds: 200), () {
+      if (product != null) {
+        setState(() {
+          isUpdate = true;
+        });
+
+        nameController.text = product!.name;
+        descController.text = descController.text;
+
+        if (product!.value.toString().split(".").length == 2) {
+          var digits = product!.value.toString().split(".")[1].length;
+          if (digits == 1)
+            valueController.text = "${product!.value}.0";
+          else
+            valueController.text = "${product!.value}";
+        } else
+          valueController.text = "${product!.value}.00";
+        setState(() {
+          imagePath = product!.photo;
+          isStock = product!.isStock;
+          if (isStock) stockController.text = "${product!.amount}";
+        });
+      }
+    });
+  }
+
+  void deleteProduct() async {
+    await firestore
+        .collection("users")
+        .doc(auth.currentUser?.uid)
+        .collection("stock")
+        .doc(product!.uid)
+        .delete();
+
+    Navigator.of(context).pop();
   }
 
   void pickImage() async {
@@ -109,38 +148,47 @@ abstract class AddProductModel extends State<AddProductView>
         showLoading();
         var url = "default";
         if (imagePath != null) {
-          List<String> result = await uploadFiles(
-              [File(imagePath)], ref + "/${auth.currentUser?.uid}");
-          if (result.isNotEmpty)
-            url = result[0];
+          if (imagePath.toString().startsWith("http"))
+            url = imagePath;
           else {
-            loadingController.close();
-            Alerts.of(context).snack("Houve um erro, tente novamente!");
+            List<String> result = await uploadFiles(
+                [File(imagePath)], ref + "/${auth.currentUser?.uid}");
+            if (result.isNotEmpty)
+              url = result[0];
+            else {
+              loadingController.close();
+              Alerts.of(context).snack("Houve um erro, tente novamente!");
+              return;
+            }
           }
         }
-        Product product = Product();
-        product.uid = Uuid().v4(options: {
-          "name": nameController.text,
-          "user": auth.currentUser?.uid
-        });
-        product.photo = url;
-        product.name = nameController.text;
-        product.description = descController.text;
-        product.value = double.parse(valueController.text
+        if (product == null) {
+          product = Product();
+          product!.uid = Uuid().v4(options: {
+            "name": nameController.text,
+            "user": auth.currentUser?.uid
+          });
+        }
+
+        product!.photo = url;
+        product!.name = nameController.text;
+        product!.description = descController.text;
+        product!.value = double.parse(valueController.text
             .replaceAll("R\$", "")
             .replaceAll(".", "")
             .replaceAll(",", "."));
         if (isStock)
-          product.amount = int.parse(stockController.text);
+          product!.amount = int.parse(stockController.text);
         else
-          product.amount = -1;
-        product.isStock = isStock;
+          product!.amount = -1;
+        product!.isStock = isStock;
 
         await firestore
             .collection("users")
             .doc(auth.currentUser?.uid)
             .collection("stock")
-            .add(product.toJson())
+            .doc(product!.uid)
+            .set(product!.toJson())
             .then((value) {
           loadingController.close();
           Navigator.of(context).pop();

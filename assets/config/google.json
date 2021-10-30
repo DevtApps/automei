@@ -1,0 +1,42 @@
+{
+    "provider": "google_pay",
+    "data": {
+        "environment": "PRODUCTION",
+        "apiVersion": 2,
+        "apiVersionMinor": 0,
+        "allowedPaymentMethods": [{
+            "type": "CARD",
+            "tokenizationSpecification": {
+                "type": "PAYMENT_GATEWAY",
+                "parameters": {
+                    "gateway": "stripe",
+                    "stripe:version": "2018-10-31",
+                    "stripe:publishableKey": "pk_live_51IdJOZEEmyOoEDXUZ3xQ1Eu93KJ8LJKaJaKVHWEYgnytmls35WwBtuqvYYvkA2aBBtfrVuRSmwyf4hI9WifKz1Hh002UgdWhHH"
+                }
+            },
+            "parameters": {
+                "allowedCardNetworks": [
+                    "VISA",
+                    "MASTERCARD"
+                ],
+                "allowedAuthMethods": [
+                    "PAN_ONLY",
+                    "CRYPTOGRAM_3DS"
+                ],
+                "billingAddressRequired": true,
+                "billingAddressParameters": {
+                    "format": "FULL",
+                    "phoneNumberRequired": true
+                }
+            }
+        }],
+        "merchantInfo": {
+            "merchantId": "BCR2DN6TV767XZJT",
+            "merchantName": "AppSide"
+        },
+        "transactionInfo": {
+            "countryCode": "BR",
+            "currencyCode": "BRL"
+        }
+    }
+}

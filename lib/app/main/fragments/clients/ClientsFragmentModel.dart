@@ -1,6 +1,7 @@
 import 'package:automei/app/api/model/Client.dart';
 import 'package:automei/app/main/add/client/AddClientModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_masked_text/extended_masked_text.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ abstract class ClientsFragmentModel extends State<ClientsFragmentView>
   late Size size;
   var loading = false;
   var searchController = TextEditingController();
+
+  var phoneController = MaskedTextController(mask: "(00) 0 0000-0000");
 
   onFabClick() async {
     if (opendedBottomSheet) {
@@ -32,9 +35,10 @@ abstract class ClientsFragmentModel extends State<ClientsFragmentView>
     }
   }
 
-  showAddClient() async {
+  showAddClient({client}) async {
     setState(() {
       opendedBottomSheet = true;
+      if (client != null) isUpdate = true;
     });
     var controller = scaffold.currentState?.showBottomSheet((c) {
       return Container(
@@ -44,15 +48,19 @@ abstract class ClientsFragmentModel extends State<ClientsFragmentView>
     }, elevation: 10);
     controller?.closed.then((value) {
       setState(() {
+        isUpdate = false;
         opendedBottomSheet = false;
       });
     });
   }
 
-  void onClientClick(Client client) {
+  void onClientClick(Client mClient) {
     if (widget.isChoice) {
-      Navigator.of(context).pop(client);
-    } else {}
+      Navigator.of(context).pop(mClient);
+    } else {
+      client = mClient;
+      showAddClient(client: client);
+    }
   }
 
   @override
@@ -75,7 +83,11 @@ abstract class ClientsFragmentModel extends State<ClientsFragmentView>
 
   Widget getIcon(Client client) {
     if (client.whatsapp.toString().isNotEmpty) {
-      return SizedBox();
+      return Image.asset(
+        "assets/images/whatsapp.png",
+        width: 28,
+        color: Colors.indigo,
+      );
     } else if (client.phone.toString().isNotEmpty) {
       return Icon(
         Icons.phone,
@@ -93,7 +105,23 @@ abstract class ClientsFragmentModel extends State<ClientsFragmentView>
         .snapshots();
   }
 
+  getMask(String text) {
+    phoneController.updateText(text);
+    return phoneController.text;
+  }
+
   Widget AddClient() {
+    if (isUpdate) {
+      nameController.text = client.name;
+      phoneController.updateText(client.phone);
+      whatsappController.updateText(client.whatsapp);
+      cpfController.updateText(client.cpf);
+      stateController.text = client.state;
+      cityController.text = client.city;
+      districtController.text = client.district;
+      streetController.text = client.street;
+      numberController.text = client.number;
+    }
     return Stack(
       children: [
         SingleChildScrollView(

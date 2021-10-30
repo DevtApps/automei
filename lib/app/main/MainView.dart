@@ -1,5 +1,11 @@
+import 'package:automei/app/api/Api.dart';
 import 'package:automei/app/main/MainModel.dart';
+import 'package:automei/app/provider/AppStatus.dart';
+import 'package:facebook_audience_network/ad/ad_banner.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainView extends StatefulWidget {
   @override
@@ -9,16 +15,24 @@ class MainView extends StatefulWidget {
 class _MainViewState extends MainModel {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: PageView(
-          controller: pageController,
-          physics: NeverScrollableScrollPhysics(),
+    Size size = MediaQuery.of(context).size;
+
+    return Consumer<AppStatus>(
+      builder: (c, app, child) => Scaffold(
+        body: Stack(
           children: [
-            dashboard,
-            sales,
-            stock,
-            clients,
-            perfil,
+            PageView(
+              controller: pageController,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                dashboard,
+                sales,
+                stock,
+                clients,
+                perfil,
+              ],
+            ),
+            !app.subscriptionStatus! ? app.ads.getMainBanner(size) : SizedBox()
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -42,6 +56,8 @@ class _MainViewState extends MainModel {
             BottomNavigationBarItem(icon: Icon(Icons.group), label: "clientes"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "perfil"),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

@@ -67,7 +67,7 @@ abstract class SocialSignInModel implements OnResult {
 
       final result = await gitHubSignIn.signIn(context);
 
-      final githubAuthCredential = GithubAuthProvider.credential(result.token);
+      final githubAuthCredential = GithubAuthProvider.credential(result.token!);
 
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithCredential(githubAuthCredential);

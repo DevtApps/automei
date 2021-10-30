@@ -26,36 +26,33 @@ class _LoginViewState extends LoginModel {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   SizedBox(
-                    height: padding.top,
+                    height: padding.top + 16,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        child: Hero(
+                          tag: "logo",
+                          child: Image.asset("assets/images/logo.png",
+                              width: size.height * 0.12),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        "Automei",
+                        style: TextStyle(
+                            color: Colors.indigo,
+                            fontSize: size.height * 0.035,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.w800),
+                      )
+                    ],
                   ),
                   Expanded(
-                      flex: 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Hero(
-                              tag: "logo",
-                              child: Image.asset("assets/images/logo.png",
-                                  width: size.width * 0.25),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            "Automei",
-                            style: TextStyle(
-                                color: Colors.indigo,
-                                fontSize: 24,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.w800),
-                          )
-                        ],
-                      )),
-                  Expanded(
-                    flex: 4,
                     child: Container(
                       padding: EdgeInsets.only(
                           left: size.width * 0.1, right: size.width * 0.1),
